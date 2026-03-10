@@ -21,19 +21,18 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
 
     const file = req.file;
-    const key = `uploads/${Date.now()}-${file.originalname}`;
+    const decodedOriginalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    const key = `uploads/${Date.now()}-${decodedOriginalName}`;
 
-    await s3
-      .putObject({
-        Bucket: BUCKET_NAME,
-        Key: key,
-        Body: file.buffer,
-        ContentType: file.mimetype
-      })
-      .promise();
+    await s3.putObject({
+      Bucket: BUCKET_NAME,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype
+    }).promise();
 
     const saved = await File.create({
-      originalName: file.originalname,
+      originalName: decodedOriginalName,
       mimeType: file.mimetype,
       size: file.size,
       s3Key: key
