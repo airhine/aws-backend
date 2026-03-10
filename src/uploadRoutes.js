@@ -97,5 +97,29 @@ router.get('/:id/download', async (req, res) => {
   }
 });
 
+// 파일 삭제: S3 객체 삭제 + DB 레코드 삭제
+router.delete('/:id', async (req, res) => {
+  try {
+    const file = await File.findByPk(req.params.id);
+    if (!file) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    await s3
+      .deleteObject({
+        Bucket: BUCKET_NAME,
+        Key: file.s3Key
+      })
+      .promise();
+
+    await file.destroy();
+
+    return res.status(200).json({ message: 'File deleted' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Failed to delete file', error: err.message });
+  }
+});
+
 module.exports = router;
 
