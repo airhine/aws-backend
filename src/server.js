@@ -40,12 +40,12 @@ app.get('/health', async (req, res) => {
 
 app.use('/files', fileUploadRouter);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 80;
 
 async function start() {
   try {
-    await sequelize.authenticate();
-    await sequelize.sync();
+    //await sequelize.authenticate();
+    //await sequelize.sync();
 
     app.listen(PORT, () => {
       console.log(`Server listening on port ${PORT}`);
