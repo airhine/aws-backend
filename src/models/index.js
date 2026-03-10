@@ -15,7 +15,15 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
   port: DB_PORT,
   dialect: 'mysql',
-  logging: false
+  timezone: '+09:00',
+  logging: false,
+  dialectOptions: {
+    charset: 'utf8mb4'
+  },
+  define: {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_unicode_ci'
+  }
 });
 
 const File = require('./File')(sequelize);
