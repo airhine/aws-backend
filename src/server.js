@@ -15,6 +15,17 @@ app.get('/', (req, res) => {
   res.json({ message: 'File upload backend is running' });
 });
 
+// 헬스체크 엔드포인트
+app.get('/health', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.status(200).json({ status: 'ok', db: 'up' });
+  } catch (err) {
+    console.error('Health check failed:', err);
+    res.status(500).json({ status: 'error', db: 'down', message: err.message });
+  }
+});
+
 app.use('/files', fileUploadRouter);
 
 const PORT = process.env.PORT || 4000;
